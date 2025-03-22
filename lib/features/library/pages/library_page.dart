@@ -6,7 +6,6 @@ import 'package:zippy/features/home/widgets/skeleton_loader.dart';
 import 'package:zippy/features/library/widgets/continue_listen_card.dart';
 import 'package:zippy/features/library/widgets/library_widget.dart';
 import 'package:zippy/source/data_dummy.dart';
-import 'package:zippy/theme/app_theme.dart';
 import 'package:zippy/utils/utils.dart';
 
 class LibraryPage extends StatefulWidget {

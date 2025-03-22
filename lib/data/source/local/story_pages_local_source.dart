@@ -14,6 +14,6 @@ class StoryPagesLocalSource {
   }
 
   Future<void> clearCache() async {
-    _cachedStoryPage = null;
+  _cachedStoryPage = null;
   }
 }

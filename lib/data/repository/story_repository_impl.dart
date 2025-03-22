@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zippy/core/http/app/app_exception.dart';
 import 'package:zippy/data/source/local/story_pages_local_source.dart';
@@ -43,32 +44,31 @@ class StoryRepositoryImpl implements StoryRepository {
 
       // If not in cache, get from remote
       final result = await _remoteSource.getStoryPage(id);
-      
-      return result.when(
-        success: (story) {
-          _localSource.saveStoryPage(story);
-          return Right(StoryPageEntity(
-            id: story.id,
-            homePageId: story.homePageId,
-            title: story.title,
-            subtitle: story.subtitle,
-            imageUrl: story.imageUrl,
-            audioUrl: story.audioUrl,
-            lyrics: story.lyrics,
-            createdAt: story.createdAt,
-            updatedAt: story.updatedAt,
-            homePage: HomePageEntity(
-              id: story.homePage.id,
-              title: story.homePage.title,
-              subtitle: story.homePage.subtitle,
-              imageUrl: story.homePage.imageUrl,
-              createdAt: story.homePage.createdAt,
-              updatedAt: story.homePage.updatedAt,
-            ),
-          ));
-        },
-        failure: (error) => Left(error),
-      );
+
+      return result.when(success: (story) {
+        _localSource.saveStoryPage(story);
+        return Right(StoryPageEntity(
+          id: story.id,
+          homePageId: story.homePageId,
+          title: story.title,
+          subtitle: story.subtitle,
+          imageUrl: story.imageUrl,
+          audioUrl: story.audioUrl,
+          lyrics: story.lyrics,
+          createdAt: story.createdAt,
+          updatedAt: story.updatedAt,
+          homePage: HomePageEntity(
+            id: story.homePage.id,
+            title: story.homePage.title,
+            subtitle: story.homePage.subtitle,
+            imageUrl: story.homePage.imageUrl,
+            createdAt: story.homePage.createdAt,
+            updatedAt: story.homePage.updatedAt,
+          ),
+        ));
+      }, failure: (error) {
+        return Left(error);
+      });
     } catch (e) {
       return Left(AppException.serverError(e.toString()));
     }

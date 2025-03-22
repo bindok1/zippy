@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zippy/core/http/http_provider.dart';
+import 'package:zippy/services/lyrics_service.dart';
 
 @module
 abstract class AppModule {
@@ -11,5 +12,6 @@ abstract class AppModule {
   // Network
   @lazySingleton
   HttpProvider get httpProvider => HttpProvider();
+
 
 }

@@ -7,7 +7,6 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:zippy/common/routers/app_router.dart';
 import 'package:zippy/common/routers/model.dart';
 import 'package:zippy/features/home/cubit/opacity_cubit.dart';
-import 'package:zippy/features/home/models/lyric_model.dart';
 import 'package:zippy/features/home/widgets/icon_animation.dart';
 import 'package:zippy/features/home/widgets/like_button.dart';
 import 'package:zippy/source/data_dummy.dart';

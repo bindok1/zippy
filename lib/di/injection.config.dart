@@ -26,6 +26,9 @@ import 'package:zippy/domain/repository/story_repository.dart' as _i32;
 import 'package:zippy/domain/usecase/get_home_page_usecase.dart' as _i463;
 import 'package:zippy/domain/usecase/get_story_page_usecase.dart' as _i398;
 import 'package:zippy/features/home/blocs/home_pages_bloc.dart' as _i458;
+import 'package:zippy/features/story/blocs/story_bloc.dart' as _i931;
+import 'package:zippy/services/connection_service.dart' as _i249;
+import 'package:zippy/services/lyrics_service.dart' as _i495;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -43,15 +46,18 @@ extension GetItInjectableX on _i174.GetIt {
       () => appModule.prefs,
       preResolve: true,
     );
+    gh.lazySingleton<_i720.HttpProvider>(() => appModule.httpProvider);
     gh.lazySingleton<_i132.StoryPagesLocalSource>(
         () => _i132.StoryPagesLocalSource());
-    gh.lazySingleton<_i720.HttpProvider>(() => appModule.httpProvider);
+    gh.lazySingleton<_i249.ConnectionService>(() => _i249.ConnectionService());
     gh.lazySingleton<_i225.HomePagesRemoteSource>(
         () => _i225.HomePagesRemoteSource(gh<_i720.HttpProvider>()));
     gh.lazySingleton<_i375.StoryPagesRemoteSource>(
         () => _i375.StoryPagesRemoteSource(gh<_i720.HttpProvider>()));
     gh.lazySingleton<_i522.HomePagesLocalSource>(
         () => _i522.HomePagesLocalSource(gh<_i460.SharedPreferences>()));
+    gh.lazySingleton<_i495.LyricsService>(
+        () => _i495.LyricsService(gh<_i460.SharedPreferences>()));
     gh.lazySingleton<_i1030.HomeRepository>(() => _i519.HomeRepositoryImpl(
           gh<_i225.HomePagesRemoteSource>(),
           gh<_i522.HomePagesLocalSource>(),
@@ -66,6 +72,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i398.GetStoryPageUseCase(gh<_i32.StoryRepository>()));
     gh.factory<_i458.HomePagesBloc>(
         () => _i458.HomePagesBloc(gh<_i463.GetHomePagesUseCase>()));
+    gh.factory<_i931.StoryBloc>(
+        () => _i931.StoryBloc(gh<_i398.GetStoryPageUseCase>()));
     return this;
   }
 }

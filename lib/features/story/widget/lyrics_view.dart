@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:zippy/services/audio_service.dart';
 import 'package:zippy/theme/app_theme.dart';
-import 'package:zippy/features/home/models/lyric_model.dart';
+import 'package:zippy/features/story/model/lyric_model.dart';
 
 class LyricsView extends StatefulWidget {
   final List<LyricLine> lyrics;

@@ -5,7 +5,7 @@ class StoryPagesResponse extends BaseModel<StoryPagesResponse> {
   final bool success;
   final int status;
   final String message;
-  final List<StoryPage> data;
+  final StoryPage data;
   final DateTime timestamp;
 
   StoryPagesResponse({
@@ -21,7 +21,7 @@ class StoryPagesResponse extends BaseModel<StoryPagesResponse> {
       success: json['success'],
       status: json['status'],
       message: json['message'],
-      data: (json['data'] as List).map((e) => StoryPage.fromJson(e)).toList(),
+      data: StoryPage.fromJson(json['data'] as Map<String, dynamic>),
       timestamp: DateTime.parse(json['timestamp']),
     );
   }
@@ -32,7 +32,7 @@ class StoryPagesResponse extends BaseModel<StoryPagesResponse> {
       'success': success,
       'status': status,
       'message': message,
-      'data': data.map((e) => e.toJson()).toList(),
+      'data': data.toJson(),
       'timestamp': timestamp.toIso8601String(),
     };
   }

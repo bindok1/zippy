@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:zippy/features/home/cubit/opacity_cubit.dart';
 import 'package:zippy/features/home/widgets/like_button.dart';
+import 'package:zippy/features/home/widgets/skeleton_loader.dart';
 import 'package:zippy/theme/app_theme.dart';
 import 'package:zippy/utils/utils.dart';
 
@@ -45,7 +47,6 @@ class _PodcastHeaderState extends State<PodcastHeader> {
     }
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
@@ -94,12 +95,28 @@ class _PodcastHeaderState extends State<PodcastHeader> {
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           children: [
-            Image.asset(
-              widget.image,
+            CachedNetworkImage(
+              imageUrl: widget.image,
               width: double.infinity,
               height: widget.expandedHeight,
               fit: BoxFit.cover,
               filterQuality: FilterQuality.high,
+              placeholder: (context, url) => CustomSkeletonLoader(
+                child: SizedBox(
+                  width: double.infinity,
+                  height: widget.expandedHeight,
+                ),
+              ),
+              errorWidget: (context, url, error) => Container(
+                width: double.infinity,
+                height: widget.expandedHeight,
+                color: AppTheme.primaryColor.withOpacity(0.3),
+                child: const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
             ),
             Positioned.fill(
               child: BackdropFilter(
@@ -148,14 +165,34 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                       ),
                     ),
                     Center(
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(28),
-                          image: DecorationImage(
-                            image: AssetImage(widget.image),
-                            fit: BoxFit.cover,
+                      child: CachedNetworkImage(
+                        imageUrl: widget.image,
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(28),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        placeholder: (context, url) =>
+                            const CustomSkeletonLoader(
+                          child: SizedBox(
+                            width: 200,
+                            height: 200,
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 200,
+                          height: 200,
+                          color: AppTheme.primaryColor.withOpacity(0.3),
+                          child: const Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: AppTheme.primaryColor,
                           ),
                         ),
                       ),

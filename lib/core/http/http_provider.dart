@@ -26,7 +26,7 @@ class HttpProvider {
   HttpProvider() : _dio = Dio() {
     _dio.options = BaseOptions(
       baseUrl: ApiConst.baseUrl,
-      connectTimeout: const Duration(seconds: 5),
+      connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 3),
       headers: {'Content-Type': 'application/json'},
     );

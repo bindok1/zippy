@@ -11,7 +11,7 @@ class CustomSkeletonLoader extends StatelessWidget {
 
   const CustomSkeletonLoader(
       {Key? key,
-      required this.isLoading,
+       this.isLoading = true,
       required this.child,
       this.baseColor = const Color(0xFFEA4B0B),
       this.highlightColor = Colors.white70,

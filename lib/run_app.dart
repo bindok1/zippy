@@ -5,6 +5,7 @@ import 'package:zippy/common/menu_nav/menu_cubit.dart';
 import 'package:zippy/di/injection.dart';
 import 'package:zippy/features/home/blocs/home_pages_bloc.dart';
 import 'package:zippy/features/home/cubit/opacity_cubit.dart';
+import 'package:zippy/features/story/blocs/story_bloc.dart';
 import 'package:zippy/observer/app_navigator.dart';
 import 'package:zippy/theme/app_theme.dart';
 
@@ -16,6 +17,7 @@ class ZippyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context)=> getIt<HomePagesBloc>()),
+        BlocProvider(create: (context)=> getIt<StoryBloc>()),
         BlocProvider<MenuCubit>(
           create: (context) => MenuCubit(),
         ),

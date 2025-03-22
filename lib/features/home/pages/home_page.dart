@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:zippy/domain/entity/home_pages_entity.dart';
 import 'package:zippy/features/home/blocs/home_pages_bloc.dart';
-import 'package:zippy/features/home/pages/story_page.dart';
+import 'package:zippy/features/story/pages/story_page.dart';
 import 'package:zippy/theme/app_theme.dart';
 import 'package:zippy/utils/utils.dart';
 
@@ -53,13 +54,14 @@ class _HomePageState extends State<HomePage> {
                     BlocBuilder<HomePagesBloc, HomePagesState>(
                       builder: (context, state) {
                         return state.when(
-                          initial: () => _bannerWidget(context, true),
-                          loading: () => _bannerWidget(context, true),
-                          loaded: (stories) {
-                            return _bannerWidget(context, false);
-                          },
-                          error: (message) => Center(child: Text('Error home_pages: $message'),)
-                        );
+                            initial: () => _bannerWidget(context, true),
+                            loading: () => _bannerWidget(context, true),
+                            loaded: (stories) {
+                              return _bannerWidget(context, false);
+                            },
+                            error: (message) => const Center(
+                                  child: Text('Error Koneksi 👀'),
+                                ));
                       },
                     )
                   ],
@@ -131,18 +133,34 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _bannerWidget(BuildContext context, bool isLoading) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const StoryPage()));
+    return BlocBuilder<HomePagesBloc, HomePagesState>(
+      builder: (context, state) {
+        final stories = state.maybeWhen(
+          loaded: (stories) => stories,
+          orElse: () => <HomePageEntity>[],
+        );
+
+        return SizedBox(
+          child: WheelScrollBanner(
+            onTap: (index) {
+              if (stories.isNotEmpty && index < stories.length) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StoryPage(
+                      storyId: stories[index].id,
+                    ),
+                  ),
+                );
+              }
+            },
+            imageUrls: stories.map((story) => story.imageUrl).toList(),
+            isLoading: isLoading,
+            title: stories.map((story) => story.title).toList(),
+            subTitle: stories.map((story) => story.subtitle).toList(),
+          ),
+        );
       },
-      child: SizedBox(
-        child: WheelScrollBanner(
-          bannerData: context.read<HomePagesBloc>().state.maybeWhen(loaded: (stories) => stories,
-          orElse: ()=> [],),
-          isLoading: isLoading,
-        ),
-      ),
     );
   }
 }
