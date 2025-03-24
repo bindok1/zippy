@@ -5,6 +5,7 @@ import 'package:zippy/di/injection.dart';
 import 'package:zippy/features/home/cubit/opacity_cubit.dart';
 import 'package:zippy/features/story/blocs/story_bloc.dart';
 import 'package:zippy/features/story/model/lyric_model.dart';
+import 'package:zippy/features/story/widget/custom_error_widget.dart';
 import 'package:zippy/features/story/widget/podcast_header.dart';
 import 'package:zippy/features/story/widget/lyrics_view.dart';
 import 'package:zippy/services/lyrics_service.dart';
@@ -12,8 +13,8 @@ import 'package:zippy/source/data_dummy.dart';
 import 'package:zippy/services/audio_service.dart';
 
 class StoryPage extends StatefulWidget {
-  final String storyId;
-  const StoryPage({super.key, required this.storyId});
+  final String storyPageId;
+  const StoryPage({super.key, required this.storyPageId});
 
   @override
   State<StoryPage> createState() => _StoryPageState();
@@ -40,9 +41,10 @@ class _StoryPageState extends State<StoryPage> {
     }
   }
 
-  Future<void> _loadLyrics(String lyricsUrl, String homePageId) async {
+  Future<void> _loadLyrics(String lyricsUrl, String storyPageId) async {
     try {
-      final lyrics = await _lyricsService.fetchLyrics(lyricsUrl, homePageId);
+      debugPrint('Story Page Home Load LYrics Page ID $storyPageId');
+      final lyrics = await _lyricsService.fetchLyrics(lyricsUrl, storyPageId);
       setState(() {
         _lyrics = lyrics;
       });
@@ -56,7 +58,7 @@ class _StoryPageState extends State<StoryPage> {
     super.initState();
     _opacityCubit = OpacityCubit();
     _scrollController = ScrollController();
-    context.read<StoryBloc>().add(StoryEvent.getStory(widget.storyId));
+    context.read<StoryBloc>().add(StoryEvent.getStory(widget.storyPageId));
     _audioService.addPlayingStateListener((playing) {
       setState(() {
         isPlaying = playing;
@@ -98,8 +100,10 @@ class _StoryPageState extends State<StoryPage> {
                 initial: () => const Center(
                       child: CircularProgressIndicator(),
                     ),
-                error: (message) => Center(
-                      child: Text('error in story page $message'),
+                error: (message) => CustomErrorWidget(
+                      title: 'Internet Error or anyone 🤒',
+                      message: message,
+                      onRetry: () => Navigator.pop(context),
                     ),
                 loading: () => const Center(
                       child: Text('Loading'),
@@ -141,6 +145,20 @@ class _StoryPageState extends State<StoryPage> {
                   );
                 });
           },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await _lyricsService.clearLyricsCache();
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Lyrics cache cleared!'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+          },
+          child: const Icon(Icons.cleaning_services),
         ),
       ),
     );

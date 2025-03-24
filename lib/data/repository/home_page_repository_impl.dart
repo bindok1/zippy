@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zippy/core/http/app/app_exception.dart';
 import 'package:zippy/data/source/local/home_pages_local_source.dart';
@@ -25,6 +26,7 @@ class HomeRepositoryImpl implements HomeRepository {
           title: story.title,
           subtitle: story.subtitle,
           imageUrl: story.imageUrl,
+          storyPageId: story.storyPageId,
           createdAt: story.createdAt,
           updatedAt: story.updatedAt,
         )).toList();
@@ -32,6 +34,7 @@ class HomeRepositoryImpl implements HomeRepository {
       }
 
       // If not in cache, get from remote
+       debugPrint('🌐 Cache empty, fetching from REMOTE');
       final result = await _remoteSource.getStories();
       
       return result.when(
@@ -42,6 +45,7 @@ class HomeRepositoryImpl implements HomeRepository {
             title: story.title,
             subtitle: story.subtitle,
             imageUrl: story.imageUrl,
+            storyPageId: story.storyPageId,
             createdAt: story.createdAt,
             updatedAt: story.updatedAt,
           )).toList();

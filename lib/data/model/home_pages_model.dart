@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:zippy/core/base/model/base_model.dart';
 
 class HomePagesResponse extends BaseModel<HomePagesResponse> {
@@ -45,6 +46,7 @@ class Story extends BaseModel<Story> {
   final String title;
   final String subtitle;
   final String imageUrl;
+  final String storyPageId;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -53,6 +55,7 @@ class Story extends BaseModel<Story> {
     required this.title,
     required this.subtitle,
     required this.imageUrl,
+    required this.storyPageId,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -63,6 +66,7 @@ class Story extends BaseModel<Story> {
       title: json['title'],
       subtitle: json['subtitle'],
       imageUrl: json['image_url'],
+      storyPageId: json['story_page_id'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
     );
@@ -75,6 +79,7 @@ class Story extends BaseModel<Story> {
       'title': title,
       'subtitle': subtitle,
       'image_url': imageUrl,
+      'story_page_id': storyPageId,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

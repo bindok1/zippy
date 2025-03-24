@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:zippy/data/source/local/home_pages_local_source.dart';
 import 'package:zippy/domain/entity/home_pages_entity.dart';
 import 'package:zippy/features/home/blocs/home_pages_bloc.dart';
 import 'package:zippy/features/story/pages/story_page.dart';
@@ -53,14 +55,33 @@ class _HomePageState extends State<HomePage> {
                     Utils.verticalSpace20,
                     BlocBuilder<HomePagesBloc, HomePagesState>(
                       builder: (context, state) {
+                        debugPrint('Current state: $state');
                         return state.when(
                             initial: () => _bannerWidget(context, true),
                             loading: () => _bannerWidget(context, true),
                             loaded: (stories) {
                               return _bannerWidget(context, false);
                             },
-                            error: (message) => const Center(
-                                  child: Text('Error Koneksi 👀'),
+                            error: (message) => Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Error Koneksi 👀'),
+                                      const SizedBox(height: 8),
+                                      Text(message.toString()),
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          final localSource =
+                                              GetIt.I<HomePagesLocalSource>();
+                                          await localSource.clearCache();
+                                          context.read<HomePagesBloc>().add(
+                                              const HomePagesEvent
+                                                  .getHomePages());
+                                        },
+                                        child: const Text('Retry'),
+                                      ),
+                                    ],
+                                  ),
                                 ));
                       },
                     )
@@ -144,11 +165,12 @@ class _HomePageState extends State<HomePage> {
           child: WheelScrollBanner(
             onTap: (index) {
               if (stories.isNotEmpty && index < stories.length) {
+                debugPrint('Banner ${stories[index].id} tapped');
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => StoryPage(
-                      storyId: stories[index].id,
+                      storyPageId: stories[index].storyPageId,
                     ),
                   ),
                 );

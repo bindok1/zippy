@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:zippy/constant/api_const.dart';
 import 'package:zippy/core/http/app/app_exception.dart';
@@ -26,8 +27,8 @@ class HttpProvider {
   HttpProvider() : _dio = Dio() {
     _dio.options = BaseOptions(
       baseUrl: ApiConst.baseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 3),
+      connectTimeout: const Duration(seconds: 8),
+      receiveTimeout: const Duration(seconds: 4),
       headers: {'Content-Type': 'application/json'},
     );
     _initCache().then((_) {

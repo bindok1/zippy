@@ -21,6 +21,7 @@ class StoryRepositoryImpl implements StoryRepository {
       // Check local cache first
       final cachedStory = await _localSource.getStoryPage(id);
       if (cachedStory != null) {
+         debugPrint('Repository: Using cached data for story ID: $id');
         return Right(StoryPageEntity(
           id: cachedStory.id,
           homePageId: cachedStory.homePageId,
@@ -36,11 +37,14 @@ class StoryRepositoryImpl implements StoryRepository {
             title: cachedStory.homePage.title,
             subtitle: cachedStory.homePage.subtitle,
             imageUrl: cachedStory.homePage.imageUrl,
+            storyPageId: cachedStory.homePage.storyPageId,
             createdAt: cachedStory.homePage.createdAt,
             updatedAt: cachedStory.homePage.updatedAt,
           ),
         ));
       }
+
+       debugPrint('Repository: No cache found, fetching from remote for ID: $id');
 
       // If not in cache, get from remote
       final result = await _remoteSource.getStoryPage(id);
@@ -62,6 +66,7 @@ class StoryRepositoryImpl implements StoryRepository {
             title: story.homePage.title,
             subtitle: story.homePage.subtitle,
             imageUrl: story.homePage.imageUrl,
+            storyPageId: story.homePage.storyPageId,
             createdAt: story.homePage.createdAt,
             updatedAt: story.homePage.updatedAt,
           ),

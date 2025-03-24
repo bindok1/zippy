@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import 'package:zippy/constant/api_const.dart';
 import 'package:zippy/core/http/http_provider.dart';
 import 'package:zippy/core/http/http_method.dart';
 import 'package:zippy/core/http/response/api_response.dart';
@@ -14,6 +13,7 @@ class StoryPagesRemoteSource {
   StoryPagesRemoteSource(this._httpProvider);
 
   Future<ApiResult<model.StoryPage>> getStoryPage(String id) async {
+    debugPrint('Fetching story page with ID: $id');
     final result = await _httpProvider.call<StoryPagesResponse>(
       path: '/api/story-pages/$id',
       method: HttpMethod.GET,
@@ -22,8 +22,8 @@ class StoryPagesRemoteSource {
 
     return result.when(
       success: (response) {
-        debugPrint('Success parsing response: ${response.data}');
-        return ApiResult.success(response.data as model.StoryPage);
+        debugPrint('Success parsing response: ${response.data.homePageId}');
+        return ApiResult.success(response.data);
       },
       failure: (error) => ApiResult.failure(error),
     );
