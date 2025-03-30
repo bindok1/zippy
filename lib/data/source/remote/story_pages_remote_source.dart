@@ -13,7 +13,6 @@ class StoryPagesRemoteSource {
   StoryPagesRemoteSource(this._httpProvider);
 
   Future<ApiResult<model.StoryPage>> getStoryPage(String id) async {
-    debugPrint('Fetching story page with ID: $id');
     final result = await _httpProvider.call<StoryPagesResponse>(
       path: '/api/story-pages/$id',
       method: HttpMethod.GET,
@@ -22,7 +21,6 @@ class StoryPagesRemoteSource {
 
     return result.when(
       success: (response) {
-        debugPrint('Success parsing response: ${response.data.homePageId}');
         return ApiResult.success(response.data);
       },
       failure: (error) => ApiResult.failure(error),
