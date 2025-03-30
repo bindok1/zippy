@@ -34,7 +34,6 @@ class HomeRepositoryImpl implements HomeRepository {
       }
 
       // If not in cache, get from remote
-       debugPrint('🌐 Cache empty, fetching from REMOTE');
       final result = await _remoteSource.getStories();
       
       return result.when(

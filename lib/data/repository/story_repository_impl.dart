@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:zippy/core/cache/story_cache_key.dart';
 import 'package:zippy/core/http/app/app_exception.dart';
 import 'package:zippy/data/source/local/story_pages_local_source.dart';
 import 'package:zippy/data/source/remote/story_pages_remote_source.dart';
@@ -18,10 +19,13 @@ class StoryRepositoryImpl implements StoryRepository {
   @override
   Future<Either<AppException, StoryPageEntity>> getStoryPage(String id) async {
     try {
+      final cacheKey = StoryCacheKey(
+        id: id,
+      );
+
       // Check local cache first
-      final cachedStory = await _localSource.getStoryPage(id);
-      if (cachedStory != null) {
-         debugPrint('Repository: Using cached data for story ID: $id');
+      final cachedStory = await _localSource.getStoryPage(cacheKey);
+      if (cachedStory != null && cachedStory.id == id) {
         return Right(StoryPageEntity(
           id: cachedStory.id,
           homePageId: cachedStory.homePageId,
@@ -44,13 +48,11 @@ class StoryRepositoryImpl implements StoryRepository {
         ));
       }
 
-       debugPrint('Repository: No cache found, fetching from remote for ID: $id');
-
       // If not in cache, get from remote
       final result = await _remoteSource.getStoryPage(id);
 
       return result.when(success: (story) {
-        _localSource.saveStoryPage(story);
+        _localSource.saveStoryPage(story, cacheKey);
         return Right(StoryPageEntity(
           id: story.id,
           homePageId: story.homePageId,

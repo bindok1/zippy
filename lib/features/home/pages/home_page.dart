@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:zippy/common/routers/app_router.dart';
 import 'package:zippy/data/source/local/home_pages_local_source.dart';
 import 'package:zippy/domain/entity/home_pages_entity.dart';
 import 'package:zippy/features/home/blocs/home_pages_bloc.dart';
+import 'package:zippy/features/story/blocs/story_bloc.dart';
 import 'package:zippy/features/story/pages/story_page.dart';
 import 'package:zippy/theme/app_theme.dart';
 import 'package:zippy/utils/utils.dart';
@@ -60,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                             initial: () => _bannerWidget(context, true),
                             loading: () => _bannerWidget(context, true),
                             loaded: (stories) {
-                              return _bannerWidget(context, false);
+                              return _bannerWidget(context, false, stories);
                             },
                             error: (message) => Center(
                                   child: Column(
@@ -153,36 +155,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _bannerWidget(BuildContext context, bool isLoading) {
-    return BlocBuilder<HomePagesBloc, HomePagesState>(
-      builder: (context, state) {
-        final stories = state.maybeWhen(
-          loaded: (stories) => stories,
-          orElse: () => <HomePageEntity>[],
-        );
+  Widget _bannerWidget(BuildContext context, bool isLoading,
+      [List<HomePageEntity> stories = const []]) {
+    return SizedBox(
+      child: WheelScrollBanner(
+        onTap: (index) async {
+          if (stories.isNotEmpty && index < stories.length) {
+            final storyId = stories[index].storyPageId;
+            debugPrint('Banner ${stories[index].storyPageId} tapped');
 
-        return SizedBox(
-          child: WheelScrollBanner(
-            onTap: (index) {
-              if (stories.isNotEmpty && index < stories.length) {
-                debugPrint('Banner ${stories[index].id} tapped');
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StoryPage(
-                      storyPageId: stories[index].storyPageId,
-                    ),
-                  ),
-                );
-              }
-            },
-            imageUrls: stories.map((story) => story.imageUrl).toList(),
-            isLoading: isLoading,
-            title: stories.map((story) => story.title).toList(),
-            subTitle: stories.map((story) => story.subtitle).toList(),
-          ),
-        );
-      },
+            await Future.microtask(() {
+              context.read<StoryBloc>().add(StoryEvent.getStory(storyId));
+            });
+
+            if (context.mounted) {
+              Navigator.pushNamed(context, AppRoute.storyPage,
+                  arguments: stories[index].storyPageId);
+            }
+          }
+        },
+        imageUrls: stories.map((story) => story.imageUrl).toList(),
+        isLoading: isLoading,
+        title: stories.map((story) => story.title).toList(),
+        subTitle: stories.map((story) => story.subtitle).toList(),
+      ),
     );
   }
 }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:zippy/common/menu_nav/menu_page.dart';
 import 'package:zippy/features/home/pages/home_page.dart';
+import 'package:zippy/features/story/pages/story_page.dart';
 
 class AppRoute {
   static const String menuPage = '/';
   static const String homePage = 'home_page';
   static const String runPodcastPage = 'run_podcast';
   static const String detailPodcastPage = 'detail_podcast';
+  static const String storyPage = 'story_page';
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -20,6 +22,11 @@ class AppRoute {
           builder: (_) => const MenuPage(),
           settings: settings,
         );
+      case storyPage:
+        final storyPageId = settings.arguments as String;
+        return MaterialPageRoute(
+            builder: (_) => StoryPage(storyPageId: storyPageId),
+            settings: settings);
 
       default:
         return MaterialPageRoute(

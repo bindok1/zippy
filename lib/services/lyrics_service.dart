@@ -7,45 +7,74 @@ import 'package:zippy/features/story/model/lyric_model.dart';
 
 @lazySingleton
 class LyricsService {
-  final SharedPreferences _prefs;
   static const String _cacheKeyPrefix = 'lyrics_cache_';
+  final SharedPreferences _prefs;
+  final Map<String, List<LyricLine>> _memoryCache = {};
 
   LyricsService(this._prefs);
-  String _getCacheKey(String storyPageId) {
-    final storyPrefix = storyPageId.substring(0, 5);
-    return '${_cacheKeyPrefix}${storyPrefix}_$storyPageId';
+
+  // Fetches lyrics from network or cache based on story ID
+  Future<List<LyricLine>> fetchLyricsFromNetwork(
+      String lyricsUrl, String storyPageId) async {
+    final cachedLyrics = await _getCachedLyrics(storyPageId);
+    if (cachedLyrics != null) {
+      return cachedLyrics;
+    }
+
+    return _fetchAndCacheLyrics(lyricsUrl, storyPageId);
   }
 
-  Future<List<LyricLine>> fetchLyrics(
-      String lyricsUrl, String storyPageId) async {
+  // Retrieves cached lyrics by story ID
+  Future<List<LyricLine>?> _getCachedLyrics(String storyPageId) async {
+    if (_memoryCache.containsKey(storyPageId)) {
+      return _memoryCache[storyPageId];
+    }
+
+    return _getPersistedLyrics(storyPageId);
+  }
+
+  // Gets lyrics from persistent storage
+  Future<List<LyricLine>?> _getPersistedLyrics(String storyPageId) async {
+    final cachedLyrics = _prefs.getString(_getCacheKey(storyPageId));
+    if (cachedLyrics == null) return null;
+
     try {
-      final cacheKey = _getCacheKey(storyPageId);
-      debugPrint('Cache Key: $cacheKey for Story ID: $storyPageId');
-
-      // Check cache first
-      final cachedLyrics = _prefs.getString(cacheKey);
-      if (cachedLyrics != null) {
-        debugPrint('Lyrics found in cache, using cache $cacheKey');
-        return _parseLyrics(cachedLyrics);
-      }
-
-      // If not in cache, fetch from network
-      final response = await http.get(Uri.parse(lyricsUrl));
-      if (response.statusCode == 200) {
-        debugPrint('Lyrics fetched from network');
-        final decodedResponse = utf8.decode(response.bodyBytes);
-        await _prefs.setString(cacheKey, decodedResponse);
-        return _parseLyrics(decodedResponse);
-      }
-      throw Exception('Failed to load lyrics');
+      final lyrics = _parseLyrics(cachedLyrics);
+      _memoryCache[storyPageId] = lyrics;
+      return lyrics;
     } catch (e) {
-      throw Exception('Error fetching lyrics: $e');
+      return null;
     }
   }
 
+  // Fetches lyrics from network and caches them
+  Future<List<LyricLine>> _fetchAndCacheLyrics(
+      String lyricsUrl, String storyPageId) async {
+    final response = await http.get(Uri.parse(lyricsUrl));
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load lyrics');
+    }
+
+    final decodedBytes = utf8.decode(response.bodyBytes);
+    final responseData = json.decode(decodedBytes);
+    final lyrics = _parseLyrics(json.encode(responseData));
+
+    await _cacheLyrics(storyPageId, responseData);
+    return lyrics;
+  }
+
+  // Caches lyrics in both memory and persistent storage
+  Future<void> _cacheLyrics(
+      String storyPageId, Map<String, dynamic> lyricsData) async {
+    final lyrics = _parseLyrics(json.encode(lyricsData));
+    _memoryCache[storyPageId] = lyrics;
+    await _prefs.setString(_getCacheKey(storyPageId), json.encode(lyricsData));
+  }
+
+ 
   List<LyricLine> _parseLyrics(String jsonStr) {
-    final Map<String, dynamic> data = json.decode(jsonStr);
-    final List<dynamic> lyrics = data['lyrics'];
+    final data = json.decode(jsonStr);
+    final lyrics = data['lyrics'] as List;
     return lyrics
         .map((lyric) => LyricLine.fromMap({
               'time': Duration(milliseconds: lyric['time']),
@@ -55,13 +84,15 @@ class LyricsService {
         .toList();
   }
 
+  // Clears all lyrics cache
   Future<void> clearLyricsCache() async {
-    final keys = _prefs.getKeys();
+    _memoryCache.clear();
+    final keys = _prefs.getKeys().where((key) => key.startsWith(_cacheKeyPrefix));
     for (final key in keys) {
-      if (key.startsWith(_cacheKeyPrefix)) {
-        await _prefs.remove(key);
-        debugPrint('Cleared lyrics cache: $key');
-      }
+      await _prefs.remove(key);
     }
   }
+
+  /// Generates cache key for story ID
+  String _getCacheKey(String storyPageId) => '${_cacheKeyPrefix}_$storyPageId';
 }
