@@ -22,7 +22,7 @@ Widget buildNavigationItem(BuildContext context, int state, int index) {
           ),
           Text(
             context.read<MenuCubit>().menuPage[index].title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               color: AppTheme.primaryColor,

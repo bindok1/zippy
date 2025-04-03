@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zippy/core/http/http_provider.dart';
 import 'package:zippy/core/http/http_method.dart';

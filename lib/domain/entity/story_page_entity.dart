@@ -11,6 +11,7 @@ class StoryPageEntity {
   final DateTime createdAt;
   final DateTime updatedAt;
   final HomePageEntity homePage;
+  final Duration duration;
 
   const StoryPageEntity({
     required this.id,
@@ -23,5 +24,6 @@ class StoryPageEntity {
     required this.createdAt,
     required this.updatedAt,
     required this.homePage,
+    required this.duration,
   });
 }

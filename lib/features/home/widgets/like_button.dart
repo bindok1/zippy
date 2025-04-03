@@ -28,7 +28,7 @@ class _LikeButtonState extends State<LikeButton>
     super.initState();
     isLiked = widget.initialLiked;
     _controller = AnimationController(
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
       lowerBound: 1,
       upperBound: 1.2,

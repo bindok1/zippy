@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zippy/core/http/http_provider.dart';
 import 'package:zippy/core/http/http_method.dart';
@@ -13,10 +12,12 @@ class HomePagesRemoteSource {
 
   Future<ApiResult<List<Story>>> getStories() async {
     final result = await _httpProvider.call<HomePagesResponse>(
-      path: '/api/home-pages',
-      method: HttpMethod.GET,
-      parser: (json) => HomePagesResponse.fromJson(json),
-    );
+        path: '/api/home-pages',
+        method: HttpMethod.GET,
+        // parser: (json) => HomePagesResponse.fromJson(json),
+        parser: (json) {
+          return HomePagesResponse.fromJson(json);
+        });
 
     return result.when(
       success: (response) => ApiResult.success(response.data),

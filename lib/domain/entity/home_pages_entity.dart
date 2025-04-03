@@ -7,6 +7,8 @@ class HomePageEntity {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  bool get isNew => DateTime.now().difference(updatedAt).inDays < 7;
+
   const HomePageEntity({
     required this.id,
     required this.title,

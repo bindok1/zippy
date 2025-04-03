@@ -8,16 +8,18 @@ class WheelScrollBanner extends StatelessWidget {
   final bool isLoading;
   final List<String> title;
   final List<String> subTitle;
+  final List<bool> showNewBadge;
   final Function(int index)? onTap;
 
   const WheelScrollBanner({
-    Key? key,
+    super.key,
     required this.imageUrls,
     required this.isLoading,
     required this.title,
     required this.subTitle,
+    required this.showNewBadge,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +28,13 @@ class WheelScrollBanner extends StatelessWidget {
         SizedBox(
           height: 600,
           child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount:  isLoading ? 4 : imageUrls.length,
+            physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics()),
+            itemCount: (isLoading ? 4 : imageUrls.length) + 1,
             itemBuilder: (context, index) {
+              if (index == (isLoading ? 4 : imageUrls.length)) {
+                return const SizedBox(height: 200);
+              }
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
                 child: GestureDetector(
@@ -38,31 +44,33 @@ class WheelScrollBanner extends StatelessWidget {
                       CustomSkeletonLoader(
                         isLoading: isLoading,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: isLoading
-                              ? Container(
-                                  height: 200,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(24)),
-                                )
-                              : CachedNetworkImage(
-                                  imageUrl: imageUrls[index],
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  placeholder: (context, url) => CustomSkeletonLoader(child: SizedBox(
+                            borderRadius: BorderRadius.circular(24),
+                            child: isLoading
+                                ? Container(
                                     height: 200,
                                     width: double.infinity,
-                                  ),
-                                    
-                                  ),
-                                  errorWidget: (context, url, error) => Container(
-                                    height: 200,
-                                    color: AppTheme.primaryColor.withOpacity(0.3),
-                                    child: const Icon(Icons.error),
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(24)),
                                   )
-                              )
-                        ),
+                                : CachedNetworkImage(
+                                    imageUrl: imageUrls[index],
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    placeholder: (context, url) =>
+                                        const CustomSkeletonLoader(
+                                          child: SizedBox(
+                                            height: 200,
+                                            width: double.infinity,
+                                          ),
+                                        ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                          height: 200,
+                                          color: AppTheme.primaryColor
+                                              .withOpacity(0.3),
+                                          child: const Icon(Icons.error),
+                                        ))),
                       ),
                       Positioned(
                         bottom: 0,
@@ -99,7 +107,9 @@ class WheelScrollBanner extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                  isLoading ? 'Kancil dan Petani Yang Marah' : title[index],
+                                isLoading
+                                    ? 'Kancil dan Petani Yang Marah'
+                                    : title[index],
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
@@ -110,7 +120,9 @@ class WheelScrollBanner extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                               isLoading ? 'Di sebuah ladang': subTitle[index],
+                                isLoading
+                                    ? 'Di sebuah ladang'
+                                    : subTitle[index],
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
@@ -122,6 +134,31 @@ class WheelScrollBanner extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (!isLoading && showNewBadge[index])
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'New!',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),

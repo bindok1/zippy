@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:injectable/injectable.dart';
-import 'package:zippy/constant/api_const.dart';
 
 @lazySingleton
 class ConnectionService {

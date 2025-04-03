@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Define your colors as constants to reuse across the app
   static const Color scaffoldBgColor = Color(0xFFF4EEEF);
   static const Color primaryColor = Color(0xFFEA4B0B);
   static const Color secondaryColor = Color(0xFFFFB640);
