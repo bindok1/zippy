@@ -52,6 +52,7 @@ class StoryPage extends BaseModel<StoryPage> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final Story homePage;
+  final Duration duration;
 
   StoryPage({
     required this.id,
@@ -64,6 +65,7 @@ class StoryPage extends BaseModel<StoryPage> {
     required this.createdAt,
     required this.updatedAt,
     required this.homePage,
+    required this.duration,
   });
 
   factory StoryPage.fromJson(Map<String, dynamic> json) {
@@ -78,6 +80,7 @@ class StoryPage extends BaseModel<StoryPage> {
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
       homePage: Story.fromJson(json['home_page']),
+      duration: Duration(microseconds: json['duration'] ?? 0),
     );
   }
 
@@ -94,6 +97,7 @@ class StoryPage extends BaseModel<StoryPage> {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'home_page': homePage.toJson(),
+      'duration': duration.inMicroseconds,
     };
   }
 

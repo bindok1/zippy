@@ -6,12 +6,14 @@ class CustomErrorWidget extends StatelessWidget {
   final String title;
   final String message;
   final VoidCallback? onRetry;
+  final String buttonText;
 
   const CustomErrorWidget({
     super.key,
     this.title = 'Internet Error 🤒',
     this.message = 'Please check your internet connection and try again',
     this.onRetry,
+    this.buttonText = 'Back to Home',
   });
 
   @override
@@ -59,7 +61,7 @@ class CustomErrorWidget extends StatelessWidget {
                 }
               },
               child: Text(
-                'Back to Home',
+                buttonText,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

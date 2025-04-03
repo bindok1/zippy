@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:zippy/common/menu_nav/menu_item_model.dart';
 import 'package:zippy/features/home/pages/home_page.dart';
-import 'package:zippy/features/library/pages/library_page.dart';
 import 'package:zippy/features/profile/pages/profile_page.dart';
-import 'package:zippy/features/vip/pages/vip_page.dart';
+import 'package:zippy/features/vip/pages/cache_page.dart';
 
 part 'menu_state.dart';
 
@@ -22,16 +21,10 @@ class MenuCubit extends Cubit<int> {
       page: const HomePage(),
     ),
     MenuItem(
-      title: 'VIP',
+      title: 'Cache',
       iconSelect: IconsaxPlusLinear.crown,
-      icon: IconsaxPlusBold.crown,
-      page: const VipPage(),
-    ),
-    MenuItem(
-      title: 'Library',
-      iconSelect: IconsaxPlusLinear.note,
-      icon: IconsaxPlusBold.note,
-      page: const LibraryPage(),
+      icon: IconsaxPlusBold.cake,
+      page: const CachePage(),
     ),
     MenuItem(
       title: 'Profile',

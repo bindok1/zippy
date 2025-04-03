@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:zippy/core/base/model/base_model.dart';
 
 class HomePagesResponse extends BaseModel<HomePagesResponse> {

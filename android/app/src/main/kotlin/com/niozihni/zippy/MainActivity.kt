@@ -51,6 +51,19 @@ class MainActivity: FlutterActivity() {
                     audioPlayer?.stop()
                     result.success(null)
                 }
+                "clearAudioCache" -> {
+                    audioPlayer?.clearCache()
+                    result.success(null)
+                }
+                "seekTo" -> {
+                    val position = call.argument<Int>("position")
+                    if(position != null){
+                        audioPlayer?.seekTo(position)
+                        result.success(null)
+                    }else{
+                        result.error("INVALID_ARGUMENT", "Position cannot be null", null)
+                    }
+                }
                 else -> result.notImplemented()
             }
         }

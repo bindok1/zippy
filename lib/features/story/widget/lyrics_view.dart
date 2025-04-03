@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:zippy/services/audio_service.dart';
 import 'package:zippy/theme/app_theme.dart';
@@ -23,6 +24,7 @@ class _LyricsViewState extends State<LyricsView> {
   final List<GlobalKey> _lyricKeys = [];
   int currentLyricIndex = 0;
   bool isPlaying = false;
+  Duration _lastPostion = Duration.zero;
 
   @override
   void initState() {
@@ -35,6 +37,9 @@ class _LyricsViewState extends State<LyricsView> {
   }
 
   void _updateLyricPosition(Duration position) {
+    if (!isPlaying) return;
+
+    _lastPostion = position;
     final int newIndex =
         widget.lyrics.indexWhere((line) => line.time > position) - 1;
 
@@ -69,6 +74,9 @@ class _LyricsViewState extends State<LyricsView> {
   void _handlePlayingState(bool playing) {
     setState(() {
       isPlaying = playing;
+      if (!playing) {
+        _lastPostion = _lastPostion;
+      }
     });
   }
 
@@ -92,23 +100,34 @@ class _LyricsViewState extends State<LyricsView> {
               final lyricIndex = index - 1;
               final lyric = widget.lyrics[lyricIndex];
 
-              return AnimatedDefaultTextStyle(
-                key: _lyricKeys[lyricIndex],
-                duration: const Duration(milliseconds: 300),
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: currentLyricIndex == lyricIndex
-                        ? AppTheme.primaryColor
-                        : Colors.black54.withOpacity(0.2),
-                    fontSize: currentLyricIndex == lyricIndex ? 20 : 18,
-                    fontWeight: currentLyricIndex == lyricIndex
-                        ? FontWeight.w900
-                        : FontWeight.normal,
-                    height: 1.5),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    lyric.text,
-                    textAlign: TextAlign.start,
+              return GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  final lyric = widget.lyrics[lyricIndex];
+                  widget.audioService.seekTo(lyric.time.inMilliseconds);
+                  setState(() {
+                    currentLyricIndex = lyricIndex;
+                  });
+                  _scrollToCurrentLyric(lyricIndex);
+                },
+                child: AnimatedDefaultTextStyle(
+                  key: _lyricKeys[lyricIndex],
+                  duration: const Duration(milliseconds: 300),
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: currentLyricIndex == lyricIndex
+                          ? AppTheme.primaryColor
+                          : Colors.black54.withOpacity(0.2),
+                      fontSize: currentLyricIndex == lyricIndex ? 20 : 18,
+                      fontWeight: currentLyricIndex == lyricIndex
+                          ? FontWeight.w900
+                          : FontWeight.normal,
+                      height: 1.5),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                      lyric.text,
+                      textAlign: TextAlign.start,
+                    ),
                   ),
                 ),
               );

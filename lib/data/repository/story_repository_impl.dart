@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zippy/core/cache/story_cache_key.dart';
 import 'package:zippy/core/http/app/app_exception.dart';
@@ -36,6 +35,7 @@ class StoryRepositoryImpl implements StoryRepository {
           lyrics: cachedStory.lyrics,
           createdAt: cachedStory.createdAt,
           updatedAt: cachedStory.updatedAt,
+          duration: cachedStory.duration,
           homePage: HomePageEntity(
             id: cachedStory.homePage.id,
             title: cachedStory.homePage.title,
@@ -63,6 +63,7 @@ class StoryRepositoryImpl implements StoryRepository {
           lyrics: story.lyrics,
           createdAt: story.createdAt,
           updatedAt: story.updatedAt,
+          duration: story.duration,
           homePage: HomePageEntity(
             id: story.homePage.id,
             title: story.homePage.title,

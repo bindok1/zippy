@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zippy/common/menu_nav/menu_cubit.dart';
 import 'package:zippy/common/menu_nav/widget/build_nav.dart';
 import 'package:zippy/theme/app_asset.dart';
@@ -37,6 +36,7 @@ class MenuPage extends StatefulWidget {
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _MenuPageState createState() => _MenuPageState();
 }
 
@@ -91,9 +91,9 @@ class _MenuPageState extends State<MenuPage> {
         builder: (context, state) {
           return Material(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: SizedBox(
-                height: 90,
+                height: 72,
                 child: Stack(
                   children: [
                     // Background
@@ -109,8 +109,7 @@ class _MenuPageState extends State<MenuPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              buildNavigationItem(context, state, 0),
-                              buildNavigationItem(context, state, 1),
+                              buildNavigationItem(context, state, 2),
                             ],
                           ),
                         ),
@@ -121,8 +120,7 @@ class _MenuPageState extends State<MenuPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              buildNavigationItem(context, state, 2),
-                              buildNavigationItem(context, state, 3),
+                              buildNavigationItem(context, state, 1),
                             ],
                           ),
                         ),
@@ -133,25 +131,29 @@ class _MenuPageState extends State<MenuPage> {
                       alignment: Alignment.topCenter,
                       child: GestureDetector(
                         onTap: () {
-                          context.read<MenuCubit>().changePage(2);
+                          context.read<MenuCubit>().changePage(0);
                         },
                         child: Container(
                           width: 60,
                           height: 60,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppTheme.darkColor,
+                            color: state == 0
+                                ? AppTheme.primaryColor
+                                : AppTheme.darkColor,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 8,
-                                spreadRadius: 1,
+                                color: state == 0
+                                    ? AppTheme.primaryColor.withOpacity(0.4)
+                                    : Colors.black26,
+                                blurRadius: state == 0 ? 12 : 8,
+                                spreadRadius: state == 0 ? 2 : 1,
                               ),
                             ],
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: SvgPicture.asset(
+                            padding: const EdgeInsets.all(4),
+                            child: Image.asset(
                               AppAsset.iconMenu,
                               fit: BoxFit.contain,
                             ),

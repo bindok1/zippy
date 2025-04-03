@@ -45,16 +45,22 @@ class AudioService {
 
   Future<void> playAudio(String path) async {
     await platform.invokeMethod('playAudio', {'path': path});
-    isPlaying = true;
   }
 
   Future<void> pauseAudio() async {
     await platform.invokeMethod('pauseAudio');
-    isPlaying = false;
   }
 
   Future<void> stopAudio() async {
     await platform.invokeMethod('stopAudio');
     isPlaying = false;
+  }
+
+  Future<void> seekTo(int position) async {
+    await platform.invokeMethod('seekTo', {'position': position});
+  }
+
+  Future<void> clearAudioCache() async {
+    await platform.invokeMethod('clearAudioCache');
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,23 +71,36 @@ class LyricsService {
     await _prefs.setString(_getCacheKey(storyPageId), json.encode(lyricsData));
   }
 
- 
+  Duration _calculateDuration(List<LyricLine> lyrics) {
+    if (lyrics.isEmpty) return Duration.zero;
+    return lyrics.last.time;
+  }
+
+  Future<Duration> getLyricsDuration(
+      String lyricsUrl, String storyPageId) async {
+    final lyrics = await fetchLyricsFromNetwork(lyricsUrl, storyPageId);
+    return _calculateDuration(lyrics);
+  }
+
   List<LyricLine> _parseLyrics(String jsonStr) {
     final data = json.decode(jsonStr);
     final lyrics = data['lyrics'] as List;
-    return lyrics
+    final parsedLyrics = lyrics
         .map((lyric) => LyricLine.fromMap({
               'time': Duration(milliseconds: lyric['time']),
               'text': lyric['text'],
               'audioPath': lyric['audioPath'] ?? '',
             }))
         .toList();
+
+    return parsedLyrics;
   }
 
   // Clears all lyrics cache
   Future<void> clearLyricsCache() async {
     _memoryCache.clear();
-    final keys = _prefs.getKeys().where((key) => key.startsWith(_cacheKeyPrefix));
+    final keys =
+        _prefs.getKeys().where((key) => key.startsWith(_cacheKeyPrefix));
     for (final key in keys) {
       await _prefs.remove(key);
     }

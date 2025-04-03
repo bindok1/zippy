@@ -19,6 +19,7 @@ class PodcastHeader extends StatefulWidget {
   final String title;
   final String subtitle;
   final Duration duration;
+  final bool isLoading;
 
   const PodcastHeader({
     super.key,
@@ -30,6 +31,7 @@ class PodcastHeader extends StatefulWidget {
     required this.title,
     required this.subtitle,
     required this.duration,
+    this.isLoading = false,
   });
 
   @override
@@ -79,7 +81,7 @@ class _PodcastHeaderState extends State<PodcastHeader> {
               opacity: opacity,
               duration: const Duration(milliseconds: 200),
               child: Text(
-                'Kancil dan Petani yang Marah',
+                widget.title,
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium!
@@ -231,7 +233,7 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                           disabledColor: Colors.white,
                           elevation: 0,
                           highlightElevation: 0,
-                          onPressed: widget.isPlaying ? null : _handlePlayPress,
+                          onPressed: _handlePlayPress,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -246,7 +248,11 @@ class _PodcastHeaderState extends State<PodcastHeader> {
                               ),
                               Utils.horizontalSpace(8),
                               Text(
-                                widget.isPlaying ? 'Playing...' : 'Play Now',
+                                widget.isLoading
+                                    ? 'Loading...'
+                                    : widget.isPlaying
+                                        ? 'Pause'
+                                        : 'Play Now',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge!

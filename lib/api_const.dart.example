@@ -1,0 +1,7 @@
+class ApiConst {
+  static const String baseUrl = 'YOUR_BASE_URL';
+  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
+  static const String googleClientId = 'YOUR_GOOGLE_CLIENT_ID';
+  static const String webClientId = 'YOUR_WEB_CLIENT_ID';
+}
